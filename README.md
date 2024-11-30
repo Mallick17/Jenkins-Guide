@@ -3,6 +3,7 @@ Jenkins is a self-contained, open source automation server which can be used to 
 ## What is Jenkins Pipeline?
 - Jenkins Pipeline is a suite of plugins which supports implementing and integrating continuous delivery pipelines into Jenkins.
 - A continuous delivery (CD) pipeline is an automated expression of your process for getting software from version control right through to your users and customers. Every change to your software (committed in source control) goes through a complex process on its way to being released. This process involves building the software in a reliable and repeatable manner, as well as progressing the built software (called a "build") through multiple stages of testing and deployment.
+---
 ### Create a pipeline project to print "hello devops" by writing pipeline script
 ```
 pipeline {
@@ -28,7 +29,7 @@ pipeline {
 - Save the pipeline.
 - Click Build Now.
 - Check the console output to see the message Hello DevOps.
-
+---
 ### Create a pipeline project to print Maven Life Cycle by writing pipeline script.
 ```
 pipeline {
@@ -85,6 +86,7 @@ pipeline {
     }
 }
 ```
+---
 #### Explanation of the Script:
 - **Pipeline Stages**:
   - Each stage corresponds to one phase of the Maven lifecycle.
@@ -145,3 +147,76 @@ pipeline {
 - 4-`Post-Execution`:
 	- If successful, it prints: "Source code pulled successfully!"
 	- If it fails, it prints: "Failed to pull the source code."
+ ---
+ ### Create pipeline project to pull source code to Jenkins server and to perform build operation by using maven tool & write a pipeline script.
+ ```
+pipeline {
+    agent any // Use any available Jenkins agent
+
+    environment {
+        GIT_REPO_URL = 'https://github.com/Mallick17/manish_webapp.git' // Git repository URL
+        GIT_BRANCH = 'master' // Branch to pull
+    }
+
+    stages {
+        stage('Pull Source Code') {
+            steps {
+                echo 'Pulling source code from Git...'
+                git branch: "${GIT_BRANCH}", url: "${GIT_REPO_URL}" // Clone the repository
+            }
+        }
+
+        stage('Clean') {
+            steps {
+                echo 'Cleaning the project...'
+                sh 'mvn clean' // Clean up the previous build artifacts
+            }
+        }
+
+        stage('Validate') {
+            steps {
+                echo 'Validating the project...'
+                sh 'mvn validate' // Validate the project structure and configuration
+            }
+        }
+
+        stage('Compile') {
+            steps {
+                echo 'Compiling the project...'
+                sh 'mvn compile' // Compile the source code
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running unit tests...'
+                sh 'mvn test' // Run the unit tests
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo 'Packaging the project...'
+                sh 'mvn package' // Package the compiled code into a JAR/WAR
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for details.'
+        }
+    }
+}
+```
+#### Explanation:
+- **Pull Source Code**: Clones the Git repository.
+- **Clean**: Runs `mvn clean` to remove any previous build artifacts.
+- **Validate**: Runs `mvn validate` to ensure the project structure is valid.
+- **Compile**: Runs `mvn compile` to compile the source code.
+- **Test**: Runs `mvn test` to execute unit tests.
+- **Package**: Runs `mvn package` to package the compiled code into a deployable artifact.
+---
