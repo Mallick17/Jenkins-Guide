@@ -86,14 +86,14 @@ pipeline {
     }
 }
 ```
----
+
 #### Explanation of the Script:
 - **Pipeline Stages**:
   - Each stage corresponds to one phase of the Maven lifecycle.
   - A descriptive `echo` command explains what happens during that phase.
 - **Post Actions:**
   - A `post` block with an `always` condition ensures a final message is displayed once the pipeline finishes.
-
+---
 ### Create a pipeline project to pull source code to Jenkins server
 ```
 pipeline {
